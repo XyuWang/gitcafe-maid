@@ -18,8 +18,8 @@ post '/railgun' do
   `cd #{path} && DISABLE_SPRING=true bundle install`
   `cd #{path} && RAILS_ENV=test DISABLE_SPRING=true bin/rake db:migrate`
   `cd #{path} && rake bower:install`
-  author = get_author path
-  #author = params['sender']['username']
+#  author = get_author path
+  author = params['sender']['username']
   res = `cd #{path} && RAILS_ENV=test DISABLE_SPRING=true rspec`
   # get author
   if res =~ /Finished/
