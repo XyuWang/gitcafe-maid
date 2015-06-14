@@ -19,9 +19,9 @@ post '/railgun' do
     `cd #{path} && DISABLE_SPRING=true bundle install`
     `cd #{path} && RAILS_ENV=test DISABLE_SPRING=true bin/rake db:migrate`
     `cd #{path} && rake bower:install`
+    `cd #{path} && rake npm:install:clean`
     #  author = get_author path
     author = params['sender']['username']
-    return if author == 'jaychsu'
     res = `cd #{path} && RAILS_ENV=test DISABLE_SPRING=true rspec`
     # get author
     if res =~ /Finished/
@@ -33,7 +33,17 @@ post '/railgun' do
       else
         is_good = false
       end
-      get_users.sample.say_to_slack(author, is_good)
+
+      if author == 'jaychsu'
+        puts 'author is jay, not send slack msg'
+      else
+        get_users.sample.say_to_slack(author, is_good)
+      end
+
+
+      if is_good
+	`cd #{path} && cap staging deploy`
+      end
     end
 
   rescue StandardError => e
