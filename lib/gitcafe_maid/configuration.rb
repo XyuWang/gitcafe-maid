@@ -1,28 +1,26 @@
 module GitcafeMaid
   class Configuration
-
     class << self
-      def ci &block
+      def ci *args, &block
         if block_given?
           @@ci_block = block
         else
-          @@ci_block.call
+          @@ci_block.call *args
         end
       end
 
       def run command
-        cd path && `#{command}`
+        `cd #{path} && #{command}`
       end
 
       def set name, value
-        define_method :name do
+        define_singleton_method name do
           value
         end
       end
 
-      require 'config/gitcafe-maid.rb'
 
-      def fail author=nil, path=nil, &:script
+      def fail author=nil, path=nil, &script
         if block_given?
           @@fail = script
         else
@@ -30,7 +28,7 @@ module GitcafeMaid
         end
       end
 
-      def succ author=nil, path=nil, &:script
+      def succ author=nil, path=nil, &script
         if block_given?
           @@succ = script
         else
@@ -38,5 +36,6 @@ module GitcafeMaid
         end
       end
     end
+    eval File.read('./config/gitcafe-maid.rb')
   end
 end
