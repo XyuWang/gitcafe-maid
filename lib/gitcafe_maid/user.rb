@@ -1,9 +1,10 @@
 require 'uri'
 require 'yaml'
+require 'rest-client'
 
 module GitcafeMaid
   class User
-    attr_accessor :good_words, :bad_words, :url;
+    attr_accessor :good_words, :bad_words, :url
     @@users = []
 
     def initialize good_words, bad_words, url
@@ -24,21 +25,20 @@ module GitcafeMaid
       word
     end
 
-    def say_to_slack author, good= true, msg=nil
-      if good
-        color = 'good'
-        msg = say_good unless msg
+    def notify author, good= true, msg=nil
+      if msg
+        msg = "#{author}: #{msg}"
       else
-        color = 'bad'
-        msg = say_bad unless msg
+        msg = (good ? say_good : say_bad)
       end
-      msg = "@#{author}: #{msg}"
-      uri = URI(@url)
-      req = Net::HTTP::Post.new uri.path
-      req.body = {attachments: [color: color, text: msg]}.to_json
-      res = Net::HTTP.start(uri.host, uri.port, :use_ssl => true) {|http|  http.request req}
-    end
 
+      if Configuration.im.to_s == "pubu"
+        RestClient.post @url, {text: msg}.to_json, :content_type => :json, :accept => :json
+      else
+        body = {attachments: [color: (good ? "good" : "bad"), text: msg]}
+        RestClient.post @url, body.to_json, :content_type => :json, :accept => :json
+      end
+    end
 
     def self.initialize_users
       Dir.glob('users/*.yml').each do |f|
@@ -50,8 +50,8 @@ module GitcafeMaid
 
     initialize_users
 
-    def self.say_to_slack author, good = true, msg = nil
-      @@users.sample.say_to_slack(author, good, msg)
+    def self.notify author, good = true, msg = nil
+      @@users.sample.notify(author, good, msg)
     end
   end
 end

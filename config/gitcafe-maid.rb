@@ -1,4 +1,4 @@
-set :im, :slack #slack
+set :im, :pubu #slack
 set :branch, "master" #设置监听的分支, all:所有分支
 set :path, "/tmp/"
 
