@@ -48,8 +48,6 @@ module GitcafeMaid
       end
     end
 
-    initialize_users
-
     def self.notify author, good = true, msg = nil
       @@users.sample.notify(author, good, msg)
     end

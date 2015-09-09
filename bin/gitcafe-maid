@@ -3,4 +3,10 @@
 $:.unshift File.expand_path(File.join(File.dirname(__FILE__), "..", "lib"))
 require 'gitcafe_maid'
 
+GitcafeMaid::Configuration.class_eval do
+  eval File.read('./config/gitcafe-maid.rb')
+end
+
+GitcafeMaid::User.initialize_users
+
 GitcafeMaid::Web.run!

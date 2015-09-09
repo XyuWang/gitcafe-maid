@@ -36,6 +36,5 @@ module GitcafeMaid
         end
       end
     end
-    eval File.read('./config/gitcafe-maid.rb')
   end
 end
