@@ -20,6 +20,7 @@ ci do |branch, path| #设置执行 CI的脚本, 返回值{success: true, msg: 's
 
   # return  {success: false, msg: "测试失败"} if failure == 0
   puts 'run ci...'
+  run './1.rb'
   {success: false, msg: "测试失败"}
 end
 
