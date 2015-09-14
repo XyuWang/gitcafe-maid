@@ -16,9 +16,9 @@ module GitcafeMaid
 
         puts "准备进行测试"
         result = Configuration.ci Configuration.path
+        User.notify author, result[:success], result[:msg]
 
         result[:success] ? Configuration.succ(author, branch) : Configuration.fail(author, branch)
-        User.notify author, result[:success], result[:msg]
 
       rescue StandardError => e
         puts e
